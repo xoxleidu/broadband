@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjts.broadband.job.dao.WorkOrderMapper">
+  <resultMap id="BaseResultMap" type="com.zjts.broadband.job.model.WorkOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="the_repair_order_id" jdbcType="CHAR" property="theRepairOrderId" />
+    <result column="appointment_date" jdbcType="INTEGER" property="appointmentDate" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="mobile" jdbcType="CHAR" property="mobile" />
+    <result column="type" jdbcType="BIT" property="type" />
+    <result column="maintenance_type" jdbcType="BIT" property="maintenanceType" />
+    <result column="Install_state" jdbcType="BIT" property="installState" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="maintenance_reason" jdbcType="VARCHAR" property="maintenanceReason" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, the_repair_order_id, appointment_date, customer_name, mobile, type, maintenance_type, 
+    Install_state, user_id, maintenance_reason, order_number, note
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from work_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--is my sql-->
+  <select id="selectByWorks" parameterType="com.zjts.broadband.job.model.WorkOrder" resultType="com.zjts.broadband.job.model.WorkOrder">
+    select * from work_order
+    WHERE 1 = 1
+    <if test="customerName!=null and customerName!=''">
+      AND customer_name LIKE CONCAT(#{customerName},'%')
+    </if>
+    <if test="appointmentDate!=null and appointmentDate!=''">
+      AND appointment_date = CONCAT(#{appointmentDate})
+    </if>
+    <if test="mobile!=null and mobile!=''">
+      AND mobile LIKE CONCAT(#{mobile},'%')
+    </if>
+    <if test="type!=null and type!=''">
+      AND `type` = CONCAT(#{type})
+    </if>
+    <if test="installState!=null and installState!=''">
+      AND install_state = CONCAT(#{installState})
+    </if>
+  </select>
+
+
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjts.broadband.job.dao.OrdersMapper">
+    <resultMap id="BaseResultMap" type="com.zjts.broadband.job.model.Orders">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="customer_id" property="customerId" jdbcType="INTEGER"/>
+        <result column="order_number" property="orderNumber" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="INTEGER"/>
+        <result column="expiry_time" property="expiryTime" jdbcType="INTEGER"/>
+        <result column="money" property="money" jdbcType="INTEGER"/>
+        <result column="remarks" property="remarks" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="install_date" property="installDate" jdbcType="INTEGER"/>
+        <result column="install_address" property="installAddress" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <update id="updateByType" parameterType="com.zjts.broadband.job.model.Orders">
+
+        UPDATE orders
+	    SET
+      	`type` = #{type}
+	    WHERE
+	    order_number =#{orderNumber} ;
+
+     </update>
+    <select id="selectByProductId" resultType="com.zjts.broadband.job.model.OrdersAll"
+            parameterType="java.lang.Integer">
+        SELECT e.name  as expensesName   FROM
+        order_product r
+        LEFT JOIN `orders` o   ON o.order_number=r.orders_number
+        LEFT JOIN  expenses e  ON e.id=r.product_id
+        WHERE o.customer_id=#{customerId} and  r.type=2
+  </select>
+
+    <select id="selectOrderAll" parameterType="com.zjts.broadband.job.model.OrdersAll" resultType="java.util.Map">
+        SELECT o.order_number as  orderNumber,o.create_time as createTime ,o.money as money,o.type as `type`,r.type AS projectType,r.product_id AS productId
+        FROM `orders` o
+        LEFT JOIN order_product r  ON o.order_number=r.orders_number
+        LEFT JOIN  expenses e  ON e.id=r.product_id
+        WHERE o.customer_id=#{customerId}
+        <if test="expensesName!=null and expensesName!=''">
+        AND  e.Name=#{expensesName}
+        </if>
+        and  r.type=2
+    </select>
+
+
+    <insert id="insertOrder" parameterType="com.zjts.broadband.job.model.OrderInsert">
+        INSERT INTO  order_product
+	    ( orders_number, `type`, product_id, discountmoney)
+	    VALUES(#{orderNumber}, #{productType}, #{productId}, #{discountMoney});
+    </insert>
+
+    <select id="selectExpensesCycle" parameterType="java.lang.Integer"
+            resultType="com.zjts.broadband.job.model.OrderInsert">
+        SELECT cycle ,cycle_type as cycleType FROM expenses WHERE  id=#{id}
+    </select>
+    <select id="orderQuery" parameterType="com.zjts.broadband.common.model.req.job.orders.ReqOrderQuery"
+            resultType="com.zjts.broadband.job.model.OrdersQuery">
+        SELECT  o.`order_number`,op.`product_id` ,cm.`status`  FROM order_product op
+        LEFT JOIN orders o ON o.`order_number`=op.orders_number
+        LEFT JOIN customer_message cm ON cm.`id`=o.`customer_id`
+        WHERE  op.type=1 AND o.`customer_id`=#{id}
+        ORDER BY o.`order_number`
+    </select>
+
+
+    <select id="orderDetailedQuery" parameterType="com.zjts.broadband.common.model.req.job.orders.ReqOrderDetailed"
+            resultType="com.zjts.broadband.job.model.OrdersDetailed">
+        SELECT    op.`orders_number`,op.`type`,op.`product_id`,COUNT(op.`product_id`) number ,op.`discountmoney`
+        FROM   order_product op
+        WHERE  1=1 
+        <if test="ordersNumber !='' and  ordersNumber!=null">
+         and op.`orders_number`= #{ordersNumber}
+        </if>
+        GROUP BY  op.`type` ,op.`product_id`
+    </select>
+
+    <insert id="orderDiscount" parameterType="com.zjts.broadband.job.model.OrderDiscount">
+        UPDATE order_product op
+        SET op.`discount` =#{discount}
+        WHERE op.orders_number=#{ordersNumber}
+        AND op.type=#{type}
+        AND op.`product_id`=#{productId}
+    </insert>
+
+    <select id="selectOrderProduct" parameterType="com.zjts.broadband.job.model.OrderUpdate"
+            resultType="java.lang.Integer">
+        SELECT discountmoney FROM order_product WHERE orders_number=#{orderNumber} and `type`=#{type} and product_id=#{productId}
+    </select>
+    <update id="updateOrderProduct" parameterType="com.zjts.broadband.job.model.OrderUpdate">
+        UPDATE order_product
+	    SET
+	    discountmoney = #{money}
+	    WHERE
+	orders_number=#{orderNumber} and `type`=#{type} and product_id=#{productId}
+    </update>
+</mapper>

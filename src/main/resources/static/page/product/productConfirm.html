@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>产品选择--后台管理模板</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+    <style>
+        .readonlyDIV {
+            background-color: #eee;
+            border: 0px;
+        }
+        .div-button-block {
+            display:block;
+        }
+        .div-button-none {
+            display:none;
+        }
+        .button-productConfirmPrint {
+            display: none;
+        }
+
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <input id="contactIdcard" type="hidden"><!--隐藏-->
+    <input id="sysIdcard" type="text"><!--隐藏-->
+    <input id="productInfo" type="text"><!--隐藏-->
+    <input id="productId" type="text"><!--隐藏-->
+    <input id="expensesId" type="text"><!--隐藏-->
+    <input id="equipmentIds" type="text"><!--隐藏-->
+    <input id="giftIds" type="text"><!--隐藏-->
+    <div class="layui-form news_list">
+
+        <table class="layui-hide" id="productList"></table>
+        <table class="layui-hide" id="expensesList"></table>
+        <table class="layui-hide" id="equipmentList"></table>
+        <table class="layui-hide" id="giftList"></table>
+    </div>
+
+    <div class="layui-input-block button-productConfirm">
+        <button class="layui-btn" lay-submit="" lay-filter="productConfirmPrint">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+
+    <div class="layui-input-block button-productConfirmPrint">
+        <a class="layui-btn addProductConfirm">打印</a>
+    </div>
+
+
+</form>
+<script type="text/javascript" src="../../layui/layui.js"></script>
+<script type="text/javascript" src="productConfirm.js"></script>
+
+</body>
+</html>

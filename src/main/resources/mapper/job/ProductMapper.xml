@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjts.broadband.job.dao.ProductMapper">
+
+    <!--get product list only-->
+    <resultMap id="productList" type="com.zjts.broadband.job.model.Product">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="status" property="status" jdbcType="CHAR"/>
+    </resultMap>
+
+    <!--get product list with expenses equipment gift-->
+    <resultMap id="productAllList" type="com.zjts.broadband.job.model.Product" extends="productList">
+        <collection property="expensesList" ofType="com.zjts.broadband.job.model.Expenses">
+            <id column="ex_id" property="id" jdbcType="INTEGER"/>
+            <result column="ex_name" property="name" jdbcType="VARCHAR"/>
+            <result column="ex_type" property="type" jdbcType="CHAR"/>
+            <result column="ip_id" property="ipId" jdbcType="INTEGER"/>
+            <result column="bandwidth_id" property="bandwidthId" jdbcType="INTEGER"/>
+            <result column="ex_price" property="price" jdbcType="DECIMAL"/>
+            <result column="ex_cycle" property="cycle" jdbcType="INTEGER"/>
+            <result column="cycle_type" property="cycleType" jdbcType="CHAR"/>
+            <result column="ex_status" property="status" jdbcType="CHAR"/>
+        </collection>
+        <collection property="equipmentList" ofType="com.zjts.broadband.common.model.req.job.product.ReqEquipmentUse">
+            <result column="eq_name" property="name"/>
+            <result column="modelId" property="modelId"/>
+            <result column="model" property="model"/>
+            <result column="eq_number" property="number"/>
+            <result column="eq_price" property="price"/>
+        </collection>
+        <collection property="giftList" ofType="com.zjts.broadband.common.model.req.job.product.ReqGiftUse">
+            <result column="g_name" property="name" jdbcType="VARCHAR"/>
+            <result column="g_id" property="id" jdbcType="INTEGER"/>
+            <result column="gift_num" property="outNumber"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, name, price, status
+  </sql>
+    <!--保存套餐基本信息-->
+    <insert id="save" parameterType="com.zjts.broadband.job.model.Product" useGeneratedKeys="true"
+            keyProperty="id">
+          insert into   product
+            (name,price)
+          values
+             (#{name},#{price})
+    </insert>
+
+    <!--套餐保存2-->
+    <insert id="saveProductDetails" parameterType="com.zjts.broadband.job.model.Product">
+        <!--关联资费-->
+        <if test="expensesList !=null">
+            insert into product_expenses
+            (product_id,expenses_id)
+            values
+            <foreach collection="expensesList" item="expenses" separator=",">
+                (#{id},#{expenses.id})
+            </foreach>;
+        </if>
+        <!--关联赠品-->
+        <if test="giftList !=null">
+            insert into product_gift
+            (product_id,gift_id,gift_num)
+            values
+            <foreach collection="giftList" item="gift" separator=",">
+                (#{id},#{gift.id},#{gift.outNumber})
+            </foreach>;
+        </if>
+        <!--关联设备-->
+        <if test="equipmentList !=null">
+            insert into product_equipment_model
+            (product_id,equipment_model_id,equipment_num)
+            values
+            <foreach collection="equipmentList" item="equipment" separator=",">
+                (#{id},#{equipment.modelId},#{equipment.number})
+            </foreach>
+        </if>
+    </insert>
+
+
+    <!--修改套餐基本信息-->
+    <update id="myUpdate" parameterType="com.zjts.broadband.job.model.Product">
+        update product p,product_expenses pex,product_gift pg,product_equipment_model peqm
+        <set>
+            <if test="name != null">
+                name =#{name,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price=#{price,jdbcType=DECIMAL},
+            </if>
+            <if test="status !=null">
+                status=#{status,jdbcType=CHAR},
+            </if>
+            <if test="expensesList !=null">
+                <foreach collection="expensesList" item="expenses" separator=",">
+                     pex.expenses_id=#{expenses.id},
+                </foreach>
+            </if>
+            <if test="giftList !=null">
+                <foreach collection="giftList" item="gift" separator=",">
+                    pg.gift_name=#{gift.name},
+                    pg.gift_num=#{gift.outNumber},
+                </foreach>
+            </if>
+            <if test="equipmentList !=null">
+                <foreach collection="equipmentList" item="equipment" separator=",">
+                    peqm.equipment_model_id=#{equipment.modelId},
+                    peqm.equipment_num=#{equipment.number},
+                </foreach>
+            </if>
+        </set>
+        where
+            p.id =#{id,jdbcType=INTEGER}
+        and pex.product_id =#{id,jdbcType=INTEGER}
+        and pg.product_id =#{id,jdbcType=INTEGER}
+        and peqm.product_id =#{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据id查询套餐详情3-->
+    <select id="findProductDetails" resultMap="productAllList">
+    select
+        p.*,ex.id as ex_id,ex.name as ex_name,ex.type as ex_type ,ex.ip_id ,
+        ex.bandwidth_id,ex.price as ex_price,ex.cycle as ex_cycle,ex.cycle_type ,
+        ex.status as ex_status,eq.name as eq_name,em.model, eq.price as eq_price,
+        g.name as g_name,g.id as g_id,peqm.equipment_model_id as  modelId,peqm.equipment_num as eq_number ,pg.gift_num as gift_num
+    from product p
+    left join  product_expenses pex on p.id=pex.product_id
+    left join expenses ex on ex.id=pex.expenses_id
+
+    left join product_equipment_model peqm on p.id=peqm.product_id
+    left  join equipment eq on eq.model_id=peqm.equipment_model_id
+
+    left join equipment_model em on  em.id=eq.model_id
+
+    left join  product_gift pg on p.id=pg.product_id
+    left join  gift g on g.id=pg.gift_id
+    where p.id=#{id,jdbcType=INTEGER}
+    </select>
+
+    <!--条件查询套餐基本情况-->
+    <select id="findProductBase" resultType="com.zjts.broadband.job.model.Product">
+        SELECT * FROM product
+        WHERE 1=1
+        <if test="id!=null">
+            AND `id`=#{id,jdbcType=INTEGER }
+        </if>
+        <if test="name !=null">
+            AND  `name` LIKE #{name}
+        </if>
+        <if test="price!=null">
+            AND price=#{price,jdbcType=DECIMAL}
+        </if>
+        <if test="status!=null">
+            AND status={status,jdbcType=CHAR}
+        </if>
+
+    </select>
+
+</mapper>

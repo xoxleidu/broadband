@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjts.broadband.job.dao.CustomerMapper" >
+
+  <resultMap id="BaseResultMap" type="com.zjts.broadband.job.model.CustomerMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="customer_name" property="customerName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="contacts" property="contacts" jdbcType="VARCHAR" />
+    <result column="contact_mobile" property="contactMobile" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="creation_time" property="creationTime" jdbcType="INTEGER"/>
+    <result column="sys_user_id" property="sysUserId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, customerName, sex, idcard, tel, mobile, address, contacts, contact_mobile, type, creation_time,
+    state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="query" parameterType="com.zjts.broadband.job.model.CustomerMessage" resultType="com.zjts.broadband.job.model.CustomerMessage" >
+  SELECT id,customer_name,sex,idcard,tel,mobile,address,contacts,contact_mobile,`type`,creation_time,status,sys_user_id
+  FROM customer_message
+    <where>
+      status=0
+      <if test="customerName!=null and customerName!=''">
+       AND customer_name LIKE CONCAT(#{customerName},'%')
+      </if>
+      <if test="idcard!=null and idcard!=''">
+      AND idcard LIKE CONCAT(#{idcard},'%')
+      </if>
+      <if test="mobile!=null and mobile!=''">
+      AND mobile LIKE CONCAT(#{mobile},'%')
+      </if>
+    </where>
+  </select>
+</mapper>

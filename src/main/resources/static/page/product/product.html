@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>产品选择--后台管理模板</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <input id="contactIdcard" type="hidden"><!--隐藏-->
+    <input id="sysIdcard" type="text"><!--隐藏-->
+    <input id="productInfo" type="text"><!--隐藏-->
+    <input id="productId" type="text"><!--隐藏-->
+    <input id="expensesId" type="text"><!--隐藏-->
+    <input id="equipmentIds" type="text"><!--隐藏-->
+    <input id="giftIds" type="text"><!--隐藏-->
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">卡片面板</div>
+                    <div class="layui-card-body">
+
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md6">
+                <div class="layui-card">
+                    <div class="layui-card-header">卡片面板</div>
+                    <div class="layui-card-body">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">套餐(单选)</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单选框</label>
+                        <div class="layui-input-block product_content">
+                            <input name="taocan" value="100M一年+猫+油" title="100M一年+猫+油" type="radio" checked="">
+                            <input name="taocan" value="100M一年+路由+猫" title="100M一年+路由+猫" type="radio">
+                            <input name="taocan" value="100M二年+路由+猫" title="100M二年+路由+猫" type="radio">
+                            <input name="taocan" value="100M三年+路由+猫" title="100M三年+路由+猫" type="radio">
+                            <input name="taocan" value="200M一年+路由+猫" title="200M一年+路由+猫" type="radio">
+                            <input name="taocan" value="200M三年+纸巾+油" title="200M三年+纸巾+油" type="radio">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">资费(单选)</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单选框</label>
+                        <div class="layui-input-block expenses_content">
+                            <input name="zifei" value="100M一年" title="100M一年" checked="" type="radio">
+                            <input name="zifei" value="100M二年" title="100M二年" type="radio">
+                            <input name="zifei" value="200M一年" title="200M一年" type="radio">
+                            <input name="zifei" value="固话" title="固话" type="radio">
+                            <input name="zifei" value="电视" title="电视" type="radio">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">设备(多选)</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">复选框</label>
+                        <div class="layui-input-block equipment_content">
+                            <input name="like[write]" title="猫" checked="" type="checkbox">
+                            <input name="like[read]" title="路由"  type="checkbox">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">赠品(多选)</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">复选框</label>
+                        <div class="layui-input-block gift_content">
+                            <input name="like[write]" title="油" type="checkbox">
+                            <input name="like[read]" title="纸巾" checked="" type="checkbox">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="addProduct">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</form>
+<script type="text/javascript" src="../../layui/layui.js"></script>
+<script type="text/javascript" src="product.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zjts.broadband.job.dao.PhoneNumberStockMapper" >
+  <resultMap id="BaseResultMap" type="com.zjts.broadband.job.model.PhoneNumberStock" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, phone_number, status
+  </sql>
+
+  <select id="findPhoneNumber" resultType="com.zjts.broadband.job.model.PhoneNumberStock">
+    select * from phone_number_stock
+    where 1=1
+    <if test="phoneNumber !=null">
+      and phone_number=#{phoneNumber}
+    </if>
+    <if test="status">
+      and status=#{status}
+    </if>
+    <if test="id !=null">
+      and `id`=#{id}
+    </if>
+  </select>
+</mapper>
