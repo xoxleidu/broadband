@@ -22,7 +22,7 @@ layui.use(['form','layer'],function(){
             'tel' : $("#address").val(),
             'type': 0
         };
-
+alert(JSON.stringify(userInfoHtml));
         $.ajax({
             type: "post",
             url: serverPath + "/customer/customerMessage/add",

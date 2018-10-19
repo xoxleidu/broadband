@@ -3,7 +3,6 @@ layui.use(['form','layer'],function(){
         layer = parent.layer === undefined ? layui.layer : top.layer,
         $ = layui.jquery;
 
-
     var serverPath = "http://localhost:8080/broadband";
     //提交个人资料
     form.on("submit(changeUser)",function(data){
@@ -13,7 +12,7 @@ layui.use(['form','layer'],function(){
         var userInfoHtml = '';
         userInfoHtml = {
             'address' : $("#address").val(),
-            'sex' : data.field.sex,
+            'sex' : Number(data.field.sex),
             'contactMobile' : $("#contactMobile").val(),
             'contacts' : $("#contacts").val(),
             'idcard' : $("#idcard").val(),
@@ -22,6 +21,7 @@ layui.use(['form','layer'],function(){
             'tel' : $("#address").val(),
             'type': 0
         };
+
 
         $.ajax({
             type: "post",

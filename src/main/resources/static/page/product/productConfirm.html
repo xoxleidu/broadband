@@ -24,6 +24,30 @@
         .button-productConfirmPrint {
             display: none;
         }
+        .productConfirmTable {
+            width: 100%;
+        }
+        .productConfirmTable tr {
+            padding: 0px;
+            margin: 0px;
+        }
+        .productConfirmTable tr td {
+            padding: 0px;
+            margin: 0px;
+        }
+        .productConfirmTableTd {
+            width:30%;
+            height: 45px;
+            border-left: #555555 1px solid;
+            text-align: center;
+        }
+        .layui-input-money {
+            border: 0px;
+            color: #d32f2f;
+            font-size: 18px;
+            height: 50px;
+            line-height: 50px;
+        }
 
     </style>
 </head>
@@ -36,23 +60,76 @@
     <input id="expensesId" type="text"><!--隐藏-->
     <input id="equipmentIds" type="text"><!--隐藏-->
     <input id="giftIds" type="text"><!--隐藏-->
-    <div class="layui-form news_list">
 
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">安装日期</label>
+            <div class="layui-input-inline">
+                <input type="text" id="installDate" class="layui-input userPhone">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">安装地址</label>
+
+            <div class="layui-input-inline layui-form" lay-filter="selFilter">
+                <select name="communityName">
+                    <option>选择小区</option>
+                </select>
+            </div>
+
+            <div class="layui-input-inline">
+                <input type="text" id="installAddress" class="layui-input userPhone">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <input type="text" id="note" class="layui-input">
+        </div>
+    </div>
+    <hr class="layui-bg-black">
+
+    <div class="layui-form">
         <table class="layui-hide" id="productList"></table>
-        <table class="layui-hide" id="expensesList"></table>
+        <table class="layui-hide" id="expensesList" lay-filter="expensesList"></table>
         <table class="layui-hide" id="equipmentList"></table>
         <table class="layui-hide" id="giftList"></table>
+        <!--<script type="text/html" id="giftNum">
+            <input type="text" value="1" class="layui-input layui-giftNum">
+        </script>-->
+
+    </div>
+    <div class="layui-form-item layui-form" lay-filter="selAllMoney">
+        <label class="layui-form-label">订单金额</label>
+        <div class="layui-input-block">
+            <input type="text" id="money" class="layui-input-money" readonly  unselectable="on">
+        </div>
     </div>
 
     <div class="layui-input-block button-productConfirm">
-        <button class="layui-btn" lay-submit="" lay-filter="productConfirmPrint">立即提交</button>
-        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        <button class="layui-btn layui-btn-productAdd" lay-submit="" lay-filter="productConfirmPrint">确认订单</button>
+        <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
     </div>
 
-    <div class="layui-input-block button-productConfirmPrint">
+   <!-- <div class="layui-input-block button-productConfirmPrint">
         <a class="layui-btn addProductConfirm">打印</a>
-    </div>
+    </div>-->
 
+    <!--操作-->
+    <script type="text/html" id="numberPhoneAdd">
+        <a class="layui-btn layui-btn-xs" lay-event="numberPhone">选择号码</a>
+        <!--<div class="layui-input-inline layui-form" lay-filter="selNumber">
+            <input type="text" id="telephone">
+        </div>-->
+    </script>
+
+    <!--操作-->
+    <!--<div class="layui-btn-group allTableEdit">
+        <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+        <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+        <button class="layui-btn" data-type="isAll">验证是否全选</button>
+    </div>-->
 
 </form>
 <script type="text/javascript" src="../../layui/layui.js"></script>

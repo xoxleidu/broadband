@@ -1,48 +1,23 @@
-layui.use(['form','layer','table','laytpl'],function(){
+layui.use(['form','layer','table','laytpl','element'],function(){
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer,
         $ = layui.jquery,
         laytpl = layui.laytpl,
+        element = layui.element,
         table = layui.table;
 
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg); //匹配目标参数
-        if (r != null) return unescape(r[2]);
-        return null; //返回参数值
-    }
-    var customerId = getUrlParam('customerId');
+
 
     //页面初始化
     var serverPath = "http://localhost:8080/broadband";
-    var customerOrderUrl = serverPath + "/order/findSelectAll";
     var allOrderUrl = serverPath + "/order/orders";
 
-    var findData = '';
+    var findData = {
+        "currentPage": 1,
+        "pageSize": 100
+    };
 
-
-    if (customerId == '' || customerId == undefined || customerId == null) {
-        findData = {
-            "currentPage": 1,
-            "pageSize": 50
-        };
-        ajaxPost(allOrderUrl,findData);
-    } else {
-        findData = {
-            "currentPage": 1,
-            "customerId": Number(customerId),
-            "pageSize": 50
-        };
-        alert(JSON.stringify(findData));
-        ajaxPost(customerOrderUrl,findData);
-    }
-    //alert(customerId);
-
-
-
-    //alert(JSON.stringify(findData));
-
+    ajaxPost(allOrderUrl,findData);
 
     function ajaxPost(url,data) {
         $.ajax({
@@ -52,27 +27,30 @@ layui.use(['form','layer','table','laytpl'],function(){
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function(res){
-                alert(JSON.stringify(res.result));
-                //openTable(res);
-                //return res.result;
+                //alert(JSON.stringify(res));
+                openTable(res);
             }
         })
     }
-    
     function openTable(data) {
         var tableIns = table.render({
-            elem: '#customerOrderList',
-            data: data.result.records,
+            elem: '#orderList',
+            data: data.result,
             cellMinWidth : 95,
             page : true,
             height : "full-125",
-            limit : 1,
+            limit : 10,
             //limits : [10,15,20,25],
-            id : "customerOrderListTable",
+            id : "orderListTable",
 
-            
             cols : [[
-                {field: 'customerName', title: '文章标题', width:350}
+                {field: 'customerId', title: 'ID', width:10},
+                {field: 'orderNumber', title: '订单号', width:350},
+                /*{field: 'money', title: '订单金额', width:350},
+                {field: 'createTime', title: '订单时间', width:350},
+                {field: 'projectType', title: '产品类型', width:350},//产品类型 1:套餐2资费3设备4赠品
+                {field: 'type', title: '状态', width:350}//状态(0.在线/激活,1.退费/未激活,2.过期)*/
+                {toolbar: '#order_bar', title: '操作', fixed:"right"},
             ]]
         });
     }
@@ -119,14 +97,23 @@ layui.use(['form','layer','table','laytpl'],function(){
     //搜索【此功能需要后台配合，所以暂时没有动态效果演示】
     $(".search_btn").on("click",function(){
         if($(".searchVal").val() != ''){
-            table.reload("newsListTable",{
+
+            var searchInfo = {
+                "currentPage": 1,
+                "orderNumber": $(".searchVal").val(),
+                "pageSize": 50
+            };
+            var searchUrl = serverPath + "/order/orderDetailedQuery";
+            alert($(".searchVal").val())
+            ajaxPost(searchUrl,searchInfo);
+            table.reload("orderListTable",{
                 page: {
                     curr: 1 //重新从第 1 页开始
                 },
-                where: {
-                    key: $(".searchVal").val()  //搜索的关键字
-                }
+                data: data.result.records,
             })
+            tableIns.reload();
+
         }else{
             layer.msg("请输入搜索的内容");
         }
@@ -190,12 +177,40 @@ layui.use(['form','layer','table','laytpl'],function(){
     })
 
     //列表操作
-    table.on('tool(newsList)', function(obj){
+    table.on('tool(orderList)', function(obj){
         var layEvent = obj.event,
-            data = obj.data;
+            data = obj.data
+        alert(JSON.stringify(data))
 
         if(layEvent === 'edit'){ //编辑
-            addNews(data);
+            //alert(JSON.stringify(data));
+            var index = layui.layer.open({
+                title : "产品选择",
+                type : 2,
+                id:'orderProductConfirm',
+                area: ['300px', '500px'],
+                content: "../product/orderProductConfirm.html",
+                success : function(layero, index){
+                    var body = layui.layer.getChildFrame('body', index);
+                        body.find("#productId").val(1);
+                        body.find("#expensesId").val(1);
+                        body.find("#equipmentIds").val(1);
+                        body.find("#giftIds").val(1);
+                        form.render();
+                    setTimeout(function(){
+                        layui.layer.tips('点击此处返回用户列表', '.layui-layer-setwin .layui-layer-close', {
+                            tips: 3
+                        });
+                    },500)
+                }
+            })
+            layui.layer.full(index);
+            window.sessionStorage.setItem("index",index);
+            //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+            $(window).on("resize",function(){
+                layui.layer.full(window.sessionStorage.getItem("index"));
+            })
+
         } else if(layEvent === 'del'){ //删除
             layer.confirm('确定删除此文章？',{icon:3, title:'提示信息'},function(index){
                 // $.get("删除文章接口",{
@@ -209,5 +224,40 @@ layui.use(['form','layer','table','laytpl'],function(){
             layer.alert("此功能需要前台展示，实际开发中传入对应的必要参数进行文章内容页面访问")
         }
     });
+
+
+    function OpenFrame(data) {
+        var productConfirmIndex = layui.layer.open({
+            title : "产品选择",
+            type : 2,
+            id:'orderProductConfirm',
+            area: ['300px', '500px'],
+            content: "../product/orderProductConfirm.html",
+            success: function(layero, index){
+                var body = layui.layer.getChildFrame('body', index);
+                alert(JSON.stringify(data))
+                //if(edit){
+                    body.find("#productId").val(data.productId);
+                    body.find("#expensesId").val(data.abstract);
+                    body.find("#equipmentIds").val(data.equipmentIds);
+                    body.find("#giftIds").val(data.giftIds);
+                    // body.find(".newsStatus select").val(edit.newsStatus);
+                    // body.find(".openness input[name='openness'][title='"+edit.newsLook+"']").prop("checked","checked");
+                    // body.find(".newsTop input[name='newsTop']").prop("checked",edit.newsTop);
+                    form.render();
+                //}
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回文章列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },1000)
+            }
+        })
+        //改变窗口大小时，重置弹窗的高度，防止超出可视区域（如F12调出debug的操作）
+        // $(window).resize(function(){
+        //     layui.layer.full(productConfirmIndex);
+        // })
+        // layui.layer.full(productConfirmIndex);
+    }
 
 })

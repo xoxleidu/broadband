@@ -5,29 +5,36 @@
 			"icon": "icon-text",
 			"href": "page/order/orderList.html",
 			"spread": false
+		},{
+			"title": "工单列表",
+			"icon": "&#xe612;",
+			"href": "page/order/workOrderList.html",
+			"spread": false
+		},{
+			"title": "固话列表",
+			"icon": "&#xe612;",
+			"href": "page/product/numberPhoneList.html",
+			"spread": false
+		},{
+			"title": "套餐列表",
+			"icon": "&#xe612;",
+			"href": "page/product/productList.html",
+			"spread": false
 		}
 	],
 	"memberCenter": [
 		{
-			"title": "客户列表",
+			"title": "新客户列表",
 			"icon": "&#xe612;",
 			"href": "page/customer/customerList.html",
 			"spread": false
-		}
-	],
-	"workOrderManagement":[
-		{
-			"title": "工单派遣",
+		},{
+			"title": "老客户列表",
 			"icon": "&#xe612;",
-			"href": "page/user/workOrderDispatch.html",
-			"spread": false
-		},
-		{
-			"title": "安装详情",
-			"icon": "icon-vip",
-			"href": "page/user/workOrderInstallation.html",
+			"href": "page/customer/customerOldList.html",
 			"spread": false
 		}
+
 	],
 	"systemeSttings": [
 		{
@@ -54,14 +61,42 @@
 	],
 	"seraphApi": [
 		{
+			"title": "三级联动模块",
+			"icon": "icon-mokuai",
+			"href": "page/doc/addressDoc.html",
+			"spread": false
+		},{
+			"title": "bodyTab模块",
+			"icon": "icon-mokuai",
+			"href": "page/doc/bodyTabDoc.html",
+			"spread": false
+		},{
+			"title": "三级菜单",
+			"icon": "icon-mokuai",
+			"href": "page/doc/navDoc.html",
+			"spread": false
+		}
+	],
+	"goodsManagement": [
+		{
+			"title": "套餐管理",
+			"icon": "icon-mokuai",
+			"href": "page/products/products.html",
+			"spread": false
+		},{
 			"title": "资费管理",
 			"icon": "icon-mokuai1",
 			"href": "page/expenses/expenses.html",
 			"spread": false
 		},{
+			"title": "设备型号管理",
+			"icon": "icon-mokuai2",
+			"href": "page/equipmentModel/equipmentModelList.html",
+			"spread": false
+		},{
 			"title": "设备管理",
 			"icon": "icon-mokuai2",
-			"href": "page/product/productList.html",
+			"href": "page/equipment/equipment.html",
 			"spread": false
 		},{
 			"title": "赠品管理",
@@ -69,12 +104,16 @@
 			"href": "page/gift/gift.html",
 			"spread": false
 		},{
-			"title": "ip管理",
+			"title": "IP管理",
 			"icon": "icon-mokuai",
 			"href": "page/ip/ip.html",
 			"spread": false
-		}
-	,{
+		},{
+			"title": "IP限速管理",
+			"icon": "icon-mokuai",
+			"href": "page/ip/ipSpeed.html",
+			"spread": false
+		},{
 			"title": "小区管理",
 			"icon": "icon-mokuai",
 			"href": "page/community/community.html",
@@ -83,5 +122,3 @@
 	]
 
 }
-
-
