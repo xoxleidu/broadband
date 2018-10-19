@@ -66,5 +66,14 @@ public class ExpensesController extends BaseController {
         }
     }
 
-
+    @ApiOperation(value = "查询资费类型接口")
+    @RequestMapping(value = "expenses/findExpensesType", method = RequestMethod.POST)
+    public APIResponse findExpensesType(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            return expensesService.findExpensesType();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return APIResponse.error(CodeEnum.ERROR, "查询错误");
+        }
+    }
 }

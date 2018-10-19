@@ -17,10 +17,17 @@
   </sql>
 
   <select id="findExpenses" resultType="com.zjts.broadband.job.model.Expenses">
-    select * from expenses
+    SELECT expenses.id,`name`,(CASE
+    WHEN type='1' THEN '宽带'
+    WHEN type='2' THEN '电视'
+    WHEN type='3' THEN '固话'
+    ELSE '其他'
+    END) type ,`ip_id`,bandwidth_id,price,cycle,cycle_type,expenses.status,ip_segment.id,ip_name as ipName,start_ip,end_ip,ip_segment.status
+    FROM expenses LEFT JOIN ip_segment ON expenses.ip_id=ip_segment.id
+
     where 1=1
     <if test="id !=null">
-      and id=#{id,jdbcType=INTEGER}
+      and expenses.id=#{id,jdbcType=INTEGER}
     </if>
     <if test="name !=null">
       and name like #{name,jdbcType=VARCHAR}
@@ -45,6 +52,18 @@
     </if>
   </select>
 
+  <select id="selectExpensesType" resultType="com.zjts.broadband.job.model.Expenses">
+    SELECT
+    (CASE
+    WHEN TYPE='1' THEN '宽带'
+    WHEN TYPE='2' THEN '电视'
+    WHEN TYPE='3' THEN '固话'
+    ELSE '其他'
+    END) `type` ,
+    cycle_type FROM expenses
+
+
+  </select>
 
 
 </mapper>

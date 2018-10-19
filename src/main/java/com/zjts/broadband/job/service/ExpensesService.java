@@ -13,4 +13,5 @@ public interface ExpensesService {
     APIResponse update(ReqExpensesAdd reqExpensesAdd);
 
     APIResponse findExpenses(ReqExpensesQuery reqExpensesQuery);
+    APIResponse findExpensesType();
 }

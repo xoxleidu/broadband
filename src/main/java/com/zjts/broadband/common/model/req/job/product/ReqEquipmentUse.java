@@ -21,7 +21,28 @@ public class ReqEquipmentUse implements Serializable {
 
     @ApiModelProperty(name = "价格")
     private BigDecimal price;
+    private String name;
+    private String model;
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getNumber() {
         return number;

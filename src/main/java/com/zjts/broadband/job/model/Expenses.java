@@ -23,6 +23,16 @@ public class Expenses {
 
     private String status;
 
+    private String ipName;
+
+    public String getIpName() {
+        return ipName;
+    }
+
+    public void setIpName(String ipName) {
+        this.ipName = ipName;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -94,4 +104,6 @@ public class Expenses {
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
     }
+
+
 }

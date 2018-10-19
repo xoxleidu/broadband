@@ -23,4 +23,5 @@ public interface GiftService {
     List<Gift> findAllGift2();
 
     APIResponse useGift(List<ReqGiftUse> list);
+    Gift selectAll(int id);
 }

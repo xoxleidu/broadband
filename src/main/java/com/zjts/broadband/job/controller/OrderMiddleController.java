@@ -10,6 +10,7 @@ import com.zjts.broadband.common.model.req.job.orders.*;
 import com.zjts.broadband.job.model.Community;
 import com.zjts.broadband.job.model.CustomerMessage;
 import com.zjts.broadband.job.service.OrdersService;
+import com.zjts.broadband.job.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("order")
 public class OrderMiddleController extends BaseController {
-
-
     @Autowired
     private OrdersService ordersService;
+
 
     @ApiOperation(value = "根据用户ID查询产品类型接口")
     @RequestMapping(value = "/selectByProductId", method = RequestMethod.POST)
@@ -84,7 +84,7 @@ public class OrderMiddleController extends BaseController {
             return APIResponse.success(ordersService.orderInsert(reqOrderAdd));
         } catch (Exception e) {
             e.printStackTrace();
-            return APIResponse.error(CodeEnum.ERROR,"订单生成成功！");
+            return APIResponse.error(CodeEnum.ERROR,"订单生成失败！");
         }
     }
     @ApiOperation(value = "修改订单状态接口")

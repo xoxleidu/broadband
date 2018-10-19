@@ -38,8 +38,8 @@ public class ExpensesServiceImpl implements ExpensesService {
     }
 
     /*
-    * 修改资费
-    * */
+     * 修改资费
+     * */
     @Override
     @ServiceLog(description = "修改资费")
     public APIResponse update(ReqExpensesAdd reqExpensesAdd) {
@@ -58,8 +58,8 @@ public class ExpensesServiceImpl implements ExpensesService {
     }
 
     /*
-    * 查询资费
-    * */
+     * 查询资费
+     * */
     @Override
     public APIResponse findExpenses(ReqExpensesQuery reqExpensesQuery) {
         Page<Expenses> page = new Page<Expenses>(reqExpensesQuery.getCurrentPage(), reqExpensesQuery.getPageSize());
@@ -70,6 +70,15 @@ public class ExpensesServiceImpl implements ExpensesService {
             return APIResponse.error(CodeEnum.FIND_NULL_ERROR);
         }
         return APIResponse.success(page.setRecords(list));
+    }
+
+    @Override
+    public APIResponse findExpensesType() {
+        List<Expenses> expenses = expensesMapper.selectExpensesType();
+        if (expenses==null) {
+            return APIResponse.error(CodeEnum.FIND_NULL_ERROR);
+        }
+        return APIResponse.success(expenses);
     }
 
 }

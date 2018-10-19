@@ -11,4 +11,6 @@ import java.util.List;
 public interface ExpensesMapper extends BaseMapper<Expenses> {
 
     List<Expenses> findExpenses(Page<Expenses> page, Expenses expenses);
+
+    List<Expenses>   selectExpensesType();
 }

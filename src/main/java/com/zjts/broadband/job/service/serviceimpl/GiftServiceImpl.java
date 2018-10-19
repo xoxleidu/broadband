@@ -122,6 +122,12 @@ public class GiftServiceImpl implements GiftService {
         return APIResponse.success();
     }
 
+    @Override
+    public Gift selectAll(int id) {
+        Gift gift = giftMapper.selectById(id);
+        return gift;
+    }
+
     /*
      * 导出Excel文件
      * */
@@ -131,4 +137,5 @@ public class GiftServiceImpl implements GiftService {
 
         return giftList;
     }
+
 }

@@ -26,5 +26,4 @@
             and status=#{status,jdbcType=CHAR}
         </if>
     </select>
-
 </mapper>

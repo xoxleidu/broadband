@@ -25,7 +25,12 @@
      </update>
     <select id="selectByProductId" resultType="com.zjts.broadband.job.model.OrdersAll"
             parameterType="java.lang.Integer">
-        SELECT e.name  as expensesName   FROM
+       SELECT (CASE
+       WHEN e.type='1' THEN '宽带'
+       WHEN e.type='2' THEN '电视'
+       WHEN e.type='3' THEN '固话'
+       ELSE '其他'
+       END)  expensesName   FROM
         order_product r
         LEFT JOIN `orders` o   ON o.order_number=r.orders_number
         LEFT JOIN  expenses e  ON e.id=r.product_id
@@ -33,13 +38,13 @@
   </select>
 
     <select id="selectOrderAll" parameterType="com.zjts.broadband.job.model.OrdersAll" resultType="java.util.Map">
-        SELECT o.order_number as  orderNumber,o.create_time as createTime ,o.money as money,o.type as `type`,r.type AS projectType,r.product_id AS productId
+        SELECT o.order_number as  orderNumber,FROM_UNIXTIME(create_time,'%Y-%m-%d')   as createTime ,FROM_UNIXTIME(expiry_time,'%Y-%m-%d')  AS expiryTime,o.money as money,o.type as `type`,r.type AS `projectType`,r.product_id AS productId
         FROM `orders` o
         LEFT JOIN order_product r  ON o.order_number=r.orders_number
         LEFT JOIN  expenses e  ON e.id=r.product_id
         WHERE o.customer_id=#{customerId}
         <if test="expensesName!=null and expensesName!=''">
-        AND  e.Name=#{expensesName}
+            AND  e.Name=#{expensesName}
         </if>
         and  r.type=2
     </select>
@@ -47,8 +52,8 @@
 
     <insert id="insertOrder" parameterType="com.zjts.broadband.job.model.OrderInsert">
         INSERT INTO  order_product
-	    ( orders_number, `type`, product_id, discountmoney)
-	    VALUES(#{orderNumber}, #{productType}, #{productId}, #{discountMoney});
+        ( orders_number, `type`, product_id, discountmoney)
+        VALUES(#{orderNumber}, #{productType}, #{productId}, #{discountMoney});
     </insert>
 
     <select id="selectExpensesCycle" parameterType="java.lang.Integer"
@@ -56,8 +61,8 @@
         SELECT cycle ,cycle_type as cycleType FROM expenses WHERE  id=#{id}
     </select>
     <select id="orderQuery" parameterType="com.zjts.broadband.common.model.req.job.orders.ReqOrderQuery"
-            resultType="com.zjts.broadband.job.model.OrdersQuery">
-        SELECT  o.`order_number`,op.`product_id` ,cm.`status`  FROM order_product op
+            resultType="com.zjts.broadband.job.model.OrderProduct">
+        SELECT  o.`order_number`,op.`product_id` ,cm.`status` as statuss  FROM order_product op
         LEFT JOIN orders o ON o.`order_number`=op.orders_number
         LEFT JOIN customer_message cm ON cm.`id`=o.`customer_id`
         WHERE  op.type=1 AND o.`customer_id`=#{id}
@@ -69,9 +74,9 @@
             resultType="com.zjts.broadband.job.model.OrdersDetailed">
         SELECT    op.`orders_number`,op.`type`,op.`product_id`,COUNT(op.`product_id`) number ,op.`discountmoney`
         FROM   order_product op
-        WHERE  1=1 
+        WHERE  1=1
         <if test="ordersNumber !='' and  ordersNumber!=null">
-         and op.`orders_number`= #{ordersNumber}
+            and  op.`orders_number`= #{ordersNumber}
         </if>
         GROUP BY  op.`type` ,op.`product_id`
     </select>
