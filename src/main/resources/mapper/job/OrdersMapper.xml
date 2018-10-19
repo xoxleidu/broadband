@@ -56,10 +56,7 @@
         VALUES(#{orderNumber}, #{productType}, #{productId}, #{discountMoney});
     </insert>
 
-    <select id="selectExpensesCycle" parameterType="java.lang.Integer"
-            resultType="com.zjts.broadband.job.model.OrderInsert">
-        SELECT cycle ,cycle_type as cycleType FROM expenses WHERE  id=#{id}
-    </select>
+
     <select id="orderQuery" parameterType="com.zjts.broadband.common.model.req.job.orders.ReqOrderQuery"
             resultType="com.zjts.broadband.job.model.OrderProduct">
         SELECT  o.`order_number`,op.`product_id` ,cm.`status` as statuss  FROM order_product op

@@ -12,5 +12,7 @@ public interface ExpensesMapper extends BaseMapper<Expenses> {
 
     List<Expenses> findExpenses(Page<Expenses> page, Expenses expenses);
 
-    List<Expenses>   selectExpensesType();
+    List<Expenses> selectExpensesType();
+
+    Expenses selectExpensesCycle(Integer id);
 }

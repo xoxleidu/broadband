@@ -9,7 +9,7 @@
     <result column="bandwidth_id" property="bandwidthId" jdbcType="INTEGER" />
     <result column="price" property="price" jdbcType="DECIMAL" />
     <result column="cycle" property="cycle" jdbcType="INTEGER" />
-    <result column="cycle_type" property="cycleType" jdbcType="CHAR" />
+    <result column="cycle_type" property="cycleType" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="CHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -65,5 +65,10 @@
 
   </select>
 
+
+  <select id="selectExpensesCycle" parameterType="java.lang.Integer"
+          resultType="com.zjts.broadband.job.model.Expenses">
+    SELECT cycle ,cycle_type  as cycleType FROM expenses WHERE  id=#{id}
+  </select>
 
 </mapper>

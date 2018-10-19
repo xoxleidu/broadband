@@ -7,10 +7,7 @@ import com.zjts.broadband.common.model.APIResponse;
 import com.zjts.broadband.common.model.req.job.customer.ReqCustomerUpdate;
 import com.zjts.broadband.common.model.req.job.orders.*;
 ;
-import com.zjts.broadband.job.dao.EquipmentMapper;
-import com.zjts.broadband.job.dao.GiftMapper;
-import com.zjts.broadband.job.dao.OrdersMapper;
-import com.zjts.broadband.job.dao.ProductMapper;
+import com.zjts.broadband.job.dao.*;
 import com.zjts.broadband.job.model.*;
 
 import com.zjts.broadband.job.service.OrdersService;
@@ -32,7 +29,10 @@ public class OrdersServiceImpl implements OrdersService {
     @Autowired
     private GiftMapper giftMapper;
     @Autowired
-    private ProductMapper  productMapper;
+    private ProductMapper productMapper;
+    @Autowired
+    private ExpensesMapper expensesMapper;
+
     /**
      * 根据用户ID查询产品类型
      *
@@ -79,11 +79,11 @@ public class OrdersServiceImpl implements OrdersService {
     public APIResponse updateMoney(ReqUpdateMoney reqUpdateMoney) throws Exception {
         OrderUpdate orderUpdate = new OrderUpdate();
         BeanUtils.copyProperties(reqUpdateMoney, orderUpdate);
-        int money=0;
-        money=  ordersMapper.selectOrderProduct(orderUpdate);
-        money=  money+reqUpdateMoney.getMoney();
+        int money = 0;
+        money = ordersMapper.selectOrderProduct(orderUpdate);
+        money = money + reqUpdateMoney.getMoney();
         orderUpdate.setMoney(money);
-        int update=   ordersMapper.updateOrderProduct(orderUpdate);
+        int update = ordersMapper.updateOrderProduct(orderUpdate);
         if (update != 1) {
             return APIResponse.error(CodeEnum.SAVE_ERROR);
         }
@@ -102,7 +102,7 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public APIResponse orderInsert(ReqOrderAdd reqOrderAdd) throws Exception {
-        Gift gift=new Gift();
+        Gift gift = new Gift();
         OrderInsert orderInsert = new OrderInsert();
         Orders orders = new Orders();
         List list = new ArrayList<>();
@@ -115,38 +115,37 @@ public class OrdersServiceImpl implements OrdersService {
         int time = Math.toIntExact(new Date().getTime() / 1000);
         String result = new SimpleDateFormat("yyyyMMdd").format(new Date(time * 1000L));
         //int time=Math.toIntExact(new Date().getTime() / 1000);
-
-        //其他的添加
         List<ReqOrderProduct> lists = reqOrderAdd.getProduct();
-
+        //在订单表中循环添加产品记录
         for (ReqOrderProduct OrderProduct : lists
                 ) {
             orderInsert.setProductType(Integer.valueOf(OrderProduct.getProductType()));
-            orderInsert.setProductId(Integer .valueOf(OrderProduct.getProductId()));
+            orderInsert.setProductId(Integer.valueOf(OrderProduct.getProductId()));
             orderInsert.setDiscountMoney(OrderProduct.getDiscountMoney());
 
-               if (orderInsert.getProductType() == 2) {
-                OrderInsert or = new OrderInsert();
-                or = ordersMapper.selectExpensesCycle(orderInsert.getProductId());
-                if (or.getCycleType() == 1) {
+            if (orderInsert.getProductType() == 2) {
+                Integer productId = orderInsert.getProductId();
+                Expenses or = expensesMapper.selectExpensesCycle(orderInsert.getProductId());
+                if (or.getCycleType() == 3) {
 
                     orders.setExpiryTime(Integer.parseInt(dateUpdate(result, 0, 0, or.getCycle())));
                 }
                 if (or.getCycleType() == 2) {
                     orders.setExpiryTime(Integer.parseInt(dateUpdate(result, 0, or.getCycle(), 0)));
                 }
-                if (or.getCycleType() == 3) {
+                if (or.getCycleType() == 1) {
                     orders.setExpiryTime(Integer.parseInt(dateUpdate(result, or.getCycle(), 0, 0)));
                 }
             }
             orderInsert.setOrderNumber(orders.getOrderNumber());
-            if (orderInsert.getProductType()==3 || orderInsert.getProductType() == 4) {
+            //根据数量循环添加设备和赠品
+            if (orderInsert.getProductType() == 3 || orderInsert.getProductType() == 4) {
                 for (int i = 0; i < OrderProduct.getNum(); i++) {
                     insert = ordersMapper.insertOrder(orderInsert);
-                    if(orderInsert.getProductType()==4){
+                    if (orderInsert.getProductType() == 4) {
                         gift.setId(orderInsert.getProductId());
                         gift = giftMapper.selectById(gift.getId());
-                        gift.setStock(gift .getStock() - 1);
+                        gift.setStock(gift.getStock() - 1);
                         gift.setOutput(gift.getOutput() + 1);
                         gift.setAmount(gift.getStock() + gift.getOutput());
                         Integer update = giftMapper.updateById(gift);
@@ -155,7 +154,7 @@ public class OrdersServiceImpl implements OrdersService {
                         return APIResponse.error(CodeEnum.SAVE_ERROR);
                     }
                 }
-            }else {
+            } else {
                 insert = ordersMapper.insertOrder(orderInsert);
                 if (insert != 1) {
                     return APIResponse.error(CodeEnum.SAVE_ERROR);
@@ -179,7 +178,6 @@ public class OrdersServiceImpl implements OrdersService {
      * @throws: Exception
      */
     @Override
-
     public APIResponse updateOrderType(ReqUpdateOrderType reqUpdateOrderType) throws Exception {
         Orders orders = new Orders();
         BeanUtils.copyProperties(reqUpdateOrderType, orders);
@@ -202,27 +200,13 @@ public class OrdersServiceImpl implements OrdersService {
     public APIResponse orderQuery(Page page, ReqOrderQuery reqOrderQuery) throws Exception {
         OrdersQuery ordersQuery = new OrdersQuery();
         BeanUtils.copyProperties(reqOrderQuery, ordersQuery);
-        List All=new ArrayList();
+        List All = new ArrayList();
         List<OrderProduct> orderQueryList = ordersMapper.orderQuery(page, ordersQuery);
-        List<Product > productDetails = productMapper.findProductDetails(ordersQuery.getId());
+        List<Product> productDetails = productMapper.findProductDetails(ordersQuery.getId());
+        OrderProduct orderProduct = new OrderProduct();
+        for (int i = 0; i < orderQueryList.size(); i++) {
 
-
-//        for ( OrderProduct orderProduct:orderQueryList) {
-//            for ( Product productDetails1:productDetails
-//                 ) {
-//                orderProduct.setName(productDetails1.getName());
-//                orderProduct.setEquipmentList(productDetails1.getEquipmentList());
-//                orderProduct.setExpensesList(productDetails1.getExpensesList());
-//                orderProduct.setGiftList(productDetails1.getGiftList());
-//                orderProduct.setId(productDetails1.getId());
-//                orderProduct.setPrice(productDetails1.getPrice());
-//                orderProduct.setStatus(productDetails1.getStatus());
-//            }
-//        }
-        OrderProduct orderProduct=new OrderProduct();
-        for (int i=0;i<orderQueryList.size();i++){
-
-            for (int r=0;r<productDetails.size();r++){
+            for (int r = 0; r < productDetails.size(); r++) {
                 orderProduct = orderQueryList.get(i);
                 Product productDetails1 = productDetails.get(r);
                 orderProduct.setName(productDetails1.getName());
@@ -235,8 +219,6 @@ public class OrdersServiceImpl implements OrdersService {
                 All.add(orderProduct);
 
             }
-
-
         }
         if (orderQueryList.isEmpty()) {
             return APIResponse.error(CodeEnum.FIND_NULL_ERROR);
@@ -252,13 +234,11 @@ public class OrdersServiceImpl implements OrdersService {
      * @throws: Exception
      */
     @Override
-    public APIResponse orderDetailedQuery(Page<ReqOrderDetailed> page,ReqOrderDetailed reqOrderDetailed) throws Exception {
+    public APIResponse orderDetailedQuery(Page<ReqOrderDetailed> page, ReqOrderDetailed reqOrderDetailed) throws Exception {
         OrdersDetailed ordersDetailed = new OrdersDetailed();
-
         BeanUtils.copyProperties(reqOrderDetailed, ordersDetailed);
-        List<OrdersDetailed> orderDetailedQuery =null;
+        List<OrdersDetailed> orderDetailedQuery = null;
         orderDetailedQuery = ordersMapper.orderDetailedQuery(ordersDetailed);
-
         if (orderDetailedQuery.isEmpty()) {
             return APIResponse.error(CodeEnum.FIND_NULL_ERROR);
         }
@@ -287,7 +267,7 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public APIResponse ordersAll(Page page) {
-        List<Orders>communityList =ordersMapper.selectPage(page,null);
+        List<Orders> communityList = ordersMapper.selectPage(page, null);
 
         if (communityList.isEmpty()) {
             return APIResponse.error(CodeEnum.SAVE_ERROR);
@@ -343,7 +323,6 @@ public class OrdersServiceImpl implements OrdersService {
         Date date = simpleDateFormat.parse(reStr);
         long ts = (date.getTime()) / 1000L;
         res = String.valueOf(ts);
-
         return res;
     }
 }

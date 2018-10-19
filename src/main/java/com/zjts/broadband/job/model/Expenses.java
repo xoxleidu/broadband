@@ -19,7 +19,7 @@ public class Expenses {
 
     private Integer cycle;
 
-    private String cycleType;
+    private Integer cycleType;
 
     private String status;
 
@@ -89,12 +89,12 @@ public class Expenses {
         this.cycle = cycle;
     }
 
-    public String getCycleType() {
+    public Integer getCycleType() {
         return cycleType;
     }
 
-    public void setCycleType(String cycleType) {
-        this.cycleType = cycleType == null ? null : cycleType.trim();
+    public void setCycleType(Integer cycleType) {
+        this.cycleType = cycleType;
     }
 
     public String getStatus() {
@@ -105,5 +105,19 @@ public class Expenses {
         this.status = status == null ? null : status.trim();
     }
 
-
+    @Override
+    public String toString() {
+        return "Expenses{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", ipId=" + ipId +
+                ", bandwidthId=" + bandwidthId +
+                ", price=" + price +
+                ", cycle=" + cycle +
+                ", cycleType='" + cycleType + '\'' +
+                ", status='" + status + '\'' +
+                ", ipName='" + ipName + '\'' +
+                '}';
+    }
 }
