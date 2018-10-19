@@ -125,7 +125,7 @@ public class OrdersServiceImpl implements OrdersService {
             orderInsert.setProductId(Integer .valueOf(OrderProduct.getProductId()));
             orderInsert.setDiscountMoney(OrderProduct.getDiscountMoney());
 
-            if (orderInsert.getProductType() == 2) {
+               if (orderInsert.getProductType() == 2) {
                 OrderInsert or = new OrderInsert();
                 or = ordersMapper.selectExpensesCycle(orderInsert.getProductId());
                 if (or.getCycleType() == 1) {
