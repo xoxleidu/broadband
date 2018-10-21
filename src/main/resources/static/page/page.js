@@ -89,3 +89,19 @@ function InitDataByPage(curr) {
         });
     })
 }
+
+/*
+
+$.getJSON( url [, data ] [, success(data, textStatus, jqXHR) ] )
+
+url是必选参数，表示json数据的地址；
+data是可选参数，用于请求数据时发送数据参数；
+success是可参数，这是一个回调函数，用于处理请求到的数据。
+
+获取json数据举例：*/
+
+$.getJSON('test.json', function(data){
+    for (var i = 0; i < data.rows.length; i++) {
+        $('#test').append('<p>' + data.rows[i].realName + '</p>');
+    }
+});
